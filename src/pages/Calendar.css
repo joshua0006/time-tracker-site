@@ -1,0 +1,129 @@
+.calendar-container {
+  font-family: Arial, sans-serif;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.calendar-container.dark {
+  background-color: #1a202c;
+  color: #e2e8f0;
+}
+
+.calendar-container.light {
+  background-color: #f7fafc;
+  color: #1a202c;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #2d3748;
+  color: #ffffff;
+}
+
+.calendar-header button {
+  background-color: #4a5568;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.calendar-days {
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-day {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-bottom: 1px solid #4a5568;
+}
+
+.day-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.day-name {
+  font-weight: bold;
+}
+
+.day-date {
+  color: #a0aec0;
+}
+
+.work-hours {
+  display: flex;
+  align-items: center;
+  background-color: #4299e1;
+  color: #ffffff;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.hours-icon {
+  margin-right: 0.5rem;
+}
+
+.calendar-container.light .calendar-header {
+  background-color: #edf2f7;
+  color: #1a202c;
+}
+
+.calendar-container.light .calendar-header button {
+  background-color: #e2e8f0;
+  color: #1a202c;
+}
+
+.calendar-container.light .calendar-day {
+  border-bottom-color: #e2e8f0;
+}
+
+.calendar-container.light .day-date {
+  color: #4a5568;
+}
+
+.calendar-container.light .work-hours {
+  background-color: #63b3ed;
+}
+
+@media (min-width: 768px) {
+  .calendar-container {
+    max-width: 100%;
+  }
+
+  .calendar-days {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .calendar-day {
+    flex: 0 0 calc(20% - 1rem);
+    margin: 0.5rem;
+    border: 1px solid #4a5568;
+    border-radius: 8px;
+  }
+
+  .calendar-container.light .calendar-day {
+    border-color: #e2e8f0;
+  }
+
+  .day-header {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .day-name {
+    margin-bottom: 0.25rem;
+  }
+
+  .work-hours {
+    margin-top: 0.5rem;
+  }
+}

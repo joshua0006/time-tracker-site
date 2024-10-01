@@ -1,38 +1,69 @@
 import React, { useState } from "react";
 import { useTheme } from "../ThemeContext";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
-// Define Timesheet component within the same file
-const Timesheet = () => {
+const Timesheet = ({ data }) => {
   const { darkMode } = useTheme();
-  const entries = [
-    { id: 1, project: "Project A", task: "Design", hours: 3 },
-    { id: 2, project: "Project B", task: "Development", hours: 5 },
-    { id: 3, project: "Project C", task: "Testing", hours: 2 },
-  ];
 
   return (
     <div
-      className={` p-4 rounded-lg shadow transition-colors duration-300 ${
+      className={`p-4 rounded-lg shadow transition-colors duration-300 ${
         darkMode ? "bg-gray-800 text-white" : "bg-white text-black"
       }`}
     >
-      <h2 className="text-lg font-semibold mb-2">Timesheet</h2>
-      <table className="w-full text-sm">
+      <h2 className="text-lg font-semibold mb-4">Weekly Timesheet</h2>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="day" />
+          <YAxis />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: darkMode ? "#1F2937" : "#FFFFFF",
+              color: darkMode ? "#FFFFFF" : "#000000",
+              border: "none",
+              borderRadius: "0.375rem",
+            }}
+          />
+          <Legend />
+          <Bar dataKey="Project A" stackId="a" fill="#8884d8" />
+          <Bar dataKey="Project B" stackId="a" fill="#82ca9d" />
+          <Bar dataKey="Project C" stackId="a" fill="#ffc658" />
+        </BarChart>
+      </ResponsiveContainer>
+      <table className="w-full text-sm mt-4">
         <thead>
           <tr className="text-left">
+            <th>Day</th>
             <th>Project</th>
             <th>Task</th>
             <th>Hours</th>
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry) => (
-            <tr key={entry.id}>
-              <td>{entry.project}</td>
-              <td>{entry.task}</td>
-              <td>{entry.hours}</td>
-            </tr>
-          ))}
+          {data.flatMap((day) =>
+            Object.entries(day)
+              .filter(([key]) => key !== "day")
+              .map(([project, hours], index) => (
+                <tr key={`${day.day}-${project}-${index}`}>
+                  {index === 0 && (
+                    <td rowSpan={Object.keys(day).length - 1}>{day.day}</td>
+                  )}
+                  <td>{project}</td>
+                  <td>Various tasks</td>
+                  <td>{hours}</td>
+                </tr>
+              ))
+          )}
         </tbody>
       </table>
     </div>
@@ -58,6 +89,23 @@ const TimesheetsPage = () => {
       return newDate;
     });
   };
+
+  // Generate sample data for the week
+  const generateWeekData = (startDate) => {
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+    return days.map((day, index) => {
+      const date = new Date(startDate);
+      date.setDate(date.getDate() + index);
+      return {
+        day: `${day} ${date.getDate()}`,
+        "Project A": Math.floor(Math.random() * 5) + 1,
+        "Project B": Math.floor(Math.random() * 4) + 1,
+        "Project C": Math.floor(Math.random() * 3) + 1,
+      };
+    });
+  };
+
+  const weekData = generateWeekData(weekStart);
 
   return (
     <div
@@ -87,7 +135,7 @@ const TimesheetsPage = () => {
           Next Week
         </button>
       </div>
-      <Timesheet />
+      <Timesheet data={weekData} />
     </div>
   );
 };

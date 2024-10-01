@@ -1,5 +1,20 @@
 import React from "react";
 import { useTheme } from "../ThemeContext";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+} from "recharts";
 
 // WeeklyActivity component
 const WeeklyActivity = () => {
@@ -19,19 +34,22 @@ const WeeklyActivity = () => {
       }`}
     >
       <h2 className="text-lg font-semibold mb-4">Weekly Activity</h2>
-      <div className="flex justify-between items-end h-32">
-        {activityData.map((day) => (
-          <div key={day.day} className="flex flex-col items-center">
-            <div
-              className={`w-4 mb-2 transition-colors duration-300 ${
-                darkMode ? "bg-blue-600" : "bg-blue-200"
-              }`}
-              style={{ height: `${day.hours * 8}px` }}
-            ></div>
-            <span className="text-xs mt-1">{day.day}</span>
-          </div>
-        ))}
-      </div>
+      <ResponsiveContainer width="100%" height={200}>
+        <BarChart data={activityData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="day" />
+          <YAxis />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: darkMode ? "#1F2937" : "#FFFFFF",
+              color: darkMode ? "#FFFFFF" : "#000000",
+              border: "none",
+              borderRadius: "0.375rem",
+            }}
+          />
+          <Bar dataKey="hours" fill="#3B82F6" />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 };
@@ -41,6 +59,11 @@ const WorkedThisWeek = () => {
   const { darkMode } = useTheme();
   const hoursWorked = 35;
   const totalHours = 40;
+  const data = [
+    { name: "Worked", value: hoursWorked },
+    { name: "Remaining", value: totalHours - hoursWorked },
+  ];
+  const COLORS = ["#3B82F6", "#E5E7EB"];
 
   return (
     <div
@@ -49,17 +72,36 @@ const WorkedThisWeek = () => {
       }`}
     >
       <h2 className="text-lg font-semibold mb-2">Worked This Week</h2>
-      <div className="flex items-center">
-        <div
-          className={`w-full rounded-full h-2.5 mr-2 transition-colors duration-300 ${
-            darkMode ? "bg-gray-600" : "bg-gray-200"
-          }`}
-        >
-          <div
-            className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
-            style={{ width: `${(hoursWorked / totalHours) * 100}%` }}
-          ></div>
-        </div>
+      <ResponsiveContainer width="100%" height={150}>
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={40}
+            outerRadius={60}
+            fill="#8884d8"
+            paddingAngle={5}
+            dataKey="value"
+          >
+            {data.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
+          <Tooltip
+            contentStyle={{
+              backgroundColor: darkMode ? "#1F2937" : "#FFFFFF",
+              color: darkMode ? "#FFFFFF" : "#000000",
+              border: "none",
+              borderRadius: "0.375rem",
+            }}
+          />
+        </PieChart>
+      </ResponsiveContainer>
+      <div className="text-center mt-2">
         <span className="text-sm font-medium">
           {hoursWorked}/{totalHours}h
         </span>
@@ -242,32 +284,23 @@ const Projects = () => {
       }`}
     >
       <h2 className="text-lg font-semibold mb-2">Projects</h2>
-      <ul className="space-y-2">
-        {projects.map((project) => (
-          <li key={project.id} className="flex items-center justify-between">
-            <div>
-              <span className="font-medium">{project.name}</span>
-              <span
-                className={`ml-2 text-xs transition-colors duration-300 ${
-                  darkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                {project.status}
-              </span>
-            </div>
-            <div
-              className={`w-24 transition-colors duration-300 ${
-                darkMode ? "bg-gray-600" : "bg-gray-200"
-              } rounded-full h-2.5`}
-            >
-              <div
-                className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
-                style={{ width: `${project.completion}%` }}
-              ></div>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <ResponsiveContainer width="100%" height={200}>
+        <LineChart data={projects}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: darkMode ? "#1F2937" : "#FFFFFF",
+              color: darkMode ? "#FFFFFF" : "#000000",
+              border: "none",
+              borderRadius: "0.375rem",
+            }}
+          />
+          <Legend />
+          <Line type="monotone" dataKey="completion" stroke="#3B82F6" />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
 };

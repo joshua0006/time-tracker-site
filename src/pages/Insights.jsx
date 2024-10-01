@@ -1,7 +1,23 @@
 import React from "react";
 import { useTheme } from "../ThemeContext";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+} from "recharts";
 
-// Define InsightCard component within the same file
 const InsightCard = ({ title, value, change, isPositive }) => {
   const { darkMode } = useTheme();
   return (
@@ -25,10 +41,8 @@ const InsightCard = ({ title, value, change, isPositive }) => {
   );
 };
 
-// Define TrendChart component within the same file
-const TrendChart = ({ data, title }) => {
+const TrendChart = ({ data, title, dataKey }) => {
   const { darkMode } = useTheme();
-  const maxValue = Math.max(...data.map((item) => item.value));
 
   return (
     <div
@@ -36,24 +50,52 @@ const TrendChart = ({ data, title }) => {
         darkMode ? "bg-gray-800 text-white" : "bg-white text-black"
       }`}
     >
-      <h2 className="text-lg font-semibold mb-2">{title}</h2>
-      <div className="flex items-end h-40 space-x-2">
-        {data.map((item, index) => (
-          <div key={index} className="flex flex-col items-center flex-1">
-            <div
-              className="bg-blue-500 w-full transition-all duration-300"
-              style={{ height: `${(item.value / maxValue) * 100}%` }}
-            ></div>
-            <span
-              className={`text-xs mt-1 ${
-                darkMode ? "text-gray-300" : "text-gray-600"
-              }`}
-            >
-              {item.label}
-            </span>
-          </div>
-        ))}
-      </div>
+      <h2 className="text-lg font-semibold mb-4">{title}</h2>
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="label" />
+          <YAxis />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: darkMode ? "#1F2937" : "#FFFFFF",
+              color: darkMode ? "#FFFFFF" : "#000000",
+              border: "none",
+              borderRadius: "0.375rem",
+            }}
+          />
+          <Legend />
+          <Line type="monotone" dataKey={dataKey} stroke="#3B82F6" />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+const ProductivityBreakdown = ({ data }) => {
+  const { darkMode } = useTheme();
+
+  return (
+    <div
+      className={`p-4 rounded-lg shadow transition-colors duration-300 ${
+        darkMode ? "bg-gray-800 text-white" : "bg-white text-black"
+      }`}
+    >
+      <h2 className="text-lg font-semibold mb-4">Productivity Breakdown</h2>
+      <ResponsiveContainer width="100%" height={300}>
+        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+          <PolarGrid />
+          <PolarAngleAxis dataKey="subject" />
+          <PolarRadiusAxis />
+          <Radar
+            name="Productivity"
+            dataKey="A"
+            stroke="#8884d8"
+            fill="#8884d8"
+            fillOpacity={0.6}
+          />
+        </RadarChart>
+      </ResponsiveContainer>
     </div>
   );
 };
@@ -97,6 +139,14 @@ const Insights = () => {
     { label: "Sun", value: 3 },
   ];
 
+  const productivityBreakdown = [
+    { subject: "Focus Time", A: 120 },
+    { subject: "Meetings", A: 80 },
+    { subject: "Communication", A: 100 },
+    { subject: "Planning", A: 70 },
+    { subject: "Learning", A: 90 },
+  ];
+
   return (
     <div
       className={`container mx-auto px-4 py-8 transition-colors duration-300 ${
@@ -109,10 +159,19 @@ const Insights = () => {
           <InsightCard key={index} {...insight} />
         ))}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <TrendChart data={productivityTrend} title="Productivity Trend" />
-        <TrendChart data={hoursWorkedTrend} title="Hours Worked Trend" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <TrendChart
+          data={productivityTrend}
+          title="Productivity Trend"
+          dataKey="value"
+        />
+        <TrendChart
+          data={hoursWorkedTrend}
+          title="Hours Worked Trend"
+          dataKey="value"
+        />
       </div>
+      <ProductivityBreakdown data={productivityBreakdown} />
     </div>
   );
 };

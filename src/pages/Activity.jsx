@@ -1,37 +1,54 @@
 import React from "react";
 import { useTheme } from "../ThemeContext";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Line,
+  ComposedChart,
+} from "recharts";
 
 // ActivityChart component
 const ActivityChart = ({ data }) => {
   const { darkMode } = useTheme();
-  const maxValue = Math.max(...data.map((item) => item.value));
 
   return (
     <div
-      className={`p-4 rounded-lg shadow transition-colors duration-300 ${
+      className={`p-6 rounded-lg shadow transition-colors duration-300 ${
         darkMode ? "bg-gray-800 text-white" : "bg-white"
       }`}
     >
-      <h2 className="text-lg font-semibold mb-2">Activity Chart</h2>
-      <div className="flex items-end h-40 space-x-2">
-        {data.map((item, index) => (
-          <div key={index} className="flex flex-col items-center flex-1">
-            <div
-              className={`w-full transition-all duration-300 ${
-                darkMode ? "bg-blue-600" : "bg-blue-500"
-              }`}
-              style={{ height: `${(item.value / maxValue) * 100}%` }}
-            ></div>
-            <span
-              className={`text-xs mt-1 transition-colors duration-300 ${
-                darkMode ? "text-gray-300" : "text-gray-600"
-              }`}
-            >
-              {item.label}
-            </span>
-          </div>
-        ))}
-      </div>
+      <h2 className="text-xl font-semibold mb-6">Activity Chart</h2>
+      <ResponsiveContainer width="100%" height={300}>
+        <ComposedChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="label" />
+          <YAxis yAxisId="left" />
+          <YAxis yAxisId="right" orientation="right" />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: darkMode ? "#1F2937" : "#FFFFFF",
+              color: darkMode ? "#FFFFFF" : "#000000",
+              border: "none",
+              borderRadius: "0.375rem",
+            }}
+          />
+          <Legend />
+          <Bar yAxisId="left" dataKey="value" fill="#3B82F6" name="Value" />
+          <Line
+            yAxisId="right"
+            type="monotone"
+            dataKey="tasks"
+            stroke="#10B981"
+            name="Tasks"
+          />
+        </ComposedChart>
+      </ResponsiveContainer>
     </div>
   );
 };
@@ -96,6 +113,8 @@ const Activity = () => {
     return days.map((day) => ({
       label: day,
       value: Math.floor(Math.random() * 10) + 1, // Random value between 1 and 10
+      tasks: Math.floor(Math.random() * 5) + 1, // Random tasks between 1 and 5
+      hours: Math.floor(Math.random() * 8) + 1, // Random hours between 1 and 8
     }));
   };
 
